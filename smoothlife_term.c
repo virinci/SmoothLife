@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -5,6 +6,7 @@
 
 #define WIDTH 100
 #define HEIGHT 100
+#define STDOUT_BUF_LEN (50 * WIDTH * HEIGHT)
 
 char level[] = " .-=coaA@#";
 #define level_count (sizeof(level)/sizeof(level[0]) - 1)
@@ -48,6 +50,8 @@ void display_grid(float grid[HEIGHT][WIDTH])
         }
         fputc('\n', stdout);
     }
+
+	fflush(stdout);
 }
 
 int emod(int a, int b)
@@ -123,6 +127,10 @@ void apply_grid_diff(void)
 int main(void)
 {
     srand(time(0));
+
+    char stdout_buf[STDOUT_BUF_LEN];
+    assert(setvbuf(stdout, stdout_buf, _IOFBF, STDOUT_BUF_LEN) == 0);
+
     random_grid();
 
     display_grid(grid);
