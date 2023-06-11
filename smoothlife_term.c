@@ -42,6 +42,21 @@ void random_grid(void)
 
 void display_grid(float grid[HEIGHT][WIDTH])
 {
+    fputs("\x1B[1J", stdout);
+
+#ifdef ANSI_TERM
+#define GRAY_TO_RGB(x) x, x, x
+    for (size_t y = 1; y < HEIGHT; y += 2) {
+        for (size_t x = 0; x < WIDTH; ++x) {
+            int curr = (int) (grid[y - 1][x] * 255.0f);
+            int next = (int) (grid[y][x] * 255.0f);
+            fprintf(stdout, "\x1B[38;2;%d;%d;%dm\x1B[48;2;%d;%d;%dm\u2580", GRAY_TO_RGB(curr), GRAY_TO_RGB(next));
+        }
+        fputs("\x1B[0m", stdout);
+        fputc('\n', stdout);
+    }
+    fputs("\x1B[0m", stdout);
+#else
     for (size_t y = 0; y < HEIGHT; ++y) {
         for (size_t x = 0; x < WIDTH; ++x) {
             char c = level[(int)(grid[y][x]*(level_count - 1))];
@@ -50,6 +65,7 @@ void display_grid(float grid[HEIGHT][WIDTH])
         }
         fputc('\n', stdout);
     }
+#endif
 
 	fflush(stdout);
 }
